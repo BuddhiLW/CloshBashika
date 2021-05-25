@@ -89,3 +89,11 @@ CLOSED: [2021-05-25 Tue 14:05]
 
 ** TODO Real-case use demo:
 - the video has 9 minutos - I still have to edit it a bit.
+*** DONE Photo
+CLOSED: [2021-05-25 Tue 14:21]
+:LOGBOOK:
+- State "DONE"       from "NEXT"       [2021-05-25 Tue 14:21]
+:END:
+
+#+caption: DSC->foto; 1415->1
+  file:https://i.stack.imgur.com/ZJU5D.jpg
