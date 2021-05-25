@@ -1,0 +1,91 @@
+* DONE Stating the problem at hand,
+CLOSED: [2021-05-25 Tue 14:11]
+:LOGBOOK:
+- State "DONE"       from "NEXT"       [2021-05-25 Tue 14:11]
+:END:
+# * Problema de nomeação a ser resolvido
+# As fotos do segundo dia de trabalho na Lupo possuem nome "DSC0<<numeral>>.JPG",  porém, a primeira foto do setor possui normeral "DSC01415.JPG".
+*All contents in Brazilian Portuguese are commented in the org-file. If you want to read it, access it directly.*
+
+In my second-day of work on *Lupo*, in Brazil, I had done some anotations as follows:
+# Nos é dada a seguinte tabela,
+- M1 : 1-3
+- M2: 4-7
+- etc.
+
+  The problem being, in the camera-data record it's named as "DSC0<<number>>.JPG", in which the first photo is called "DSC01415.JPG".
+
+  So, the solution would be to rename these files, so that the name-structure of both the list and the files matched.
+
+  That is, we want to convert in the following manner DSC01415.JPG -> DSC00001.JPG. Or, more generally, DSC0<<numeral>> -> DSC0(<<numeral>> - 1415).JPG.
+
+  You can see the solution in pure bash, [[https://stackoverflow.com/questions/67679940/bash-rename-with-logical-mathematical-operations/67680513#67680513][in the Stack Overflow]].
+# Assim, seria ideal converter o nome DSC01415.JPG -> DSC00001.JPG. Ou, de forma mais geral, DSC0<<numeral>> -> DSC0(<<numeral>> - 1415).JPG.
+
+** DONE Solution with *closh* and *babashka*
+CLOSED: [2021-05-25 Tue 14:11]
+:LOGBOOK:
+- State "DONE"       from "NEXT"       [2021-05-25 Tue 14:11]
+:END:
+
+#+begin_src clojure
+   #!/usr/bin/env closh-zero.jar
+  
+   ;; mkdir nome-convertido
+  
+   ;; ls |> (first) |> (map #(str/split % #"teste")) |> (first) |> (second)
+  
+   ;; (defn photo-id [name]
+   ;;   (sh (id-ext) |> (first) |> (second) |> (map #'(str/split % #".txt")) |> (first)))
+  
+   ;; (defn id-string [name]
+   ;;   (sh (str name)))
+  
+   ;; (defn ls-first []
+   ;;   (sh ls |> (first)))
+  
+   ;; (defn id-extension [filename]
+   ;;   (->
+   ;;    (str/split filename #"teste")
+   ;;    (first)
+   ;;    (second)))
+  
+   (defn split-reg [filename reg] 
+     (str/split filename (re-pattern reg)))
+  
+   ;; ls |> (map #(split-reg % "teste")) |> (map second) |> \
+   ;; ;; (map #(split-reg % ".txt")) |> (map first) |> \
+   ;; (map # (Integer/parseInt %))
+  
+   (defn file-ids [file reg1 reg2]
+     (->
+      (split-reg file reg1)
+      (second)
+      ((fn [s] (split-reg s reg2)))
+      (first)
+      ((fn [s] (Integer/parseInt s)))))
+  
+   (defn clj-rn [file reg1 arg reg2]
+     (sh mv (identity file) (str/join [reg1 arg reg2])))
+ #+end_src
+
+ In Closh shell, we would write
+ #+begin_src clojure 
+   ls |> (map #(file-ids % "teste" ".txt")) |> (map #(- % 5)) |> (map str) |> (map #(clj-rn %1 "does-it-work" %2 ".org") (sh ls |> (identity)))  
+ #+end_src
+
+ Or, the with defined comand =rename-test=, we could specify, in the following way: 
+ #+begin_src clojure
+rename-test "teste" ".txt" 5 "does-it-work" ".org"
+ #+end_src
+
+** DONE The result:
+CLOSED: [2021-05-25 Tue 14:05]
+:LOGBOOK:
+- State "DONE"       from "NEXT"       [2021-05-25 Tue 14:05]
+:END:
+
+ [[file:demo-vid/scripts-closh-demo.mp4][file:./demo-vid/scripts-closh-demo.mp4]]
+
+** TODO Real-case use demo:
+- the video has 9 minutos - I still have to edit it a bit.
