@@ -1,0 +1,94 @@
+* Separating a sequence of files into folders
+
+We have a list-structure of how files should be separated, related to their function. i.e.,
+[[file:Lupo-D2.org::*Problema de nomeação a ser resolvido][the renaming problem - table of files]].
+
+Now that they have the right naming, we wish to translate an object containing all the important partition-numbers. That is, what interval of photos should reside in what directory.
+** Examples
+e.g.,
+#+begin_example
+files 1-3 pertain to file 1; files 4-7 pertain to file 2; etc. 
+#+end_example
+
+More generally,
+#+begin_example
+λ:([1, 3], [4, 7], ... ) -> (1, 2, ...)
+#+end_example
+
+** Real case
+It's given the following list of file-numbers,
+
+#+begin_example
+[1 3 7 11 14 17 20 23 26 31 35 39 42 45 448 51 54 57 60 63 66 70 74 77 84 87 90 93 96 99 102 105 108 11 115 118 121 127 130 133 137 140 144 147 150 154 157 160 163 166 169 172 175 179 182 186 189 192 196 201 205 211 214 218 222 225 228 232 235 238 241 245 248 251 254 257 260 263 266 269 272 276 279 283 287 290 294 298 301 304 307 310 313 316 320 324 327 330 334 337 340 343 347 350 354 357 360 363 367 370 373 377 380 384 387 390 393 396 399 402 405 409 412 415 418 421 425 428 431 434 438 441 444 447 450 455 459 462 465 469 473 476 480 484 487 492 495 498 501 504 507 510 514 519 522 525 528 535 538 541 544 547 550 553 556 559 562 565 568 571 575 578 581 584 587 590 593 596 599 605 611 614 617 620 624 627 630 633 636 639 642 645 648 651 654 658 663 666]
+#+end_example
+
+*** Note that.
+The first file goes from [1,3]; then, [4,7],[8,11], etc. It's given only the final-number in the interval, because the start is the last final-number plus one.
+
+* Coding
+
+** Preliminaries
+*** Defining our closh she-bang!
+#+begin_src clojure :tangle ../closh-scripting/partitioning.clj :mkdirp 
+  #!/usr/bin/env closh-zero.jar
+#+end_src
+
+*** The data
+Let define this list as the position-list (e.i., p-list),
+#+begin_src clojure :tangle ../closh-scripting/partitioning.clj :mkdirp
+  (def p-list [1 3 7 11 14 17 20 23 26 31 35 39 42 45 448 51 54 57 60 63 66 70 74 77 84 87 90 93 96 99 102 105 108 11 115 118 121 127 130 133 137 140 144 147 150 154 157 160 163 166 169 172 175 179 182 186 189 192 196 201 205 211 214 218 222 225 228 232 235 238 241 245 248 251 254 257 260 263 266 269 272 276 279 283 287 290 294 298 301 304 307 310 313 316 320 324 327 330 334 337 340 343 347 350 354 357 360 363 367 370 373 377 380 384 387 390 393 396 399 402 405 409 412 415 418 421 425 428 431 434 438 441 444 447 450 455 459 462 465 469 473 476 480 484 487 492 495 498 501 504 507 510 514 519 522 525 528 535 538 541 544 547 550 553 556 559 562 565 568 571 575 578 581 584 587 590 593 596 599 605 611 614 617 620 624 627 630 633 636 639 642 645 648 651 654 658 663 666])
+#+end_src
+
+** [coll] -> [pair-coll]
+
+Given a coll, for example, [1 2 3 4] -> [[1 2] [3 4]].
+#+begin_src clojure :tangle ../closh-scripting/partitioning.clj :mkdirp 
+  (defn generate-pairs [coll]
+    (loop [new-coll []
+           db coll]
+      (if (or (= (count db) 0) (= (count db) 1))
+        new-coll
+        (recur
+         (conj new-coll (vec (take 2 db)))
+         (drop 2 db)))))
+#+end_src
+
+** [end-interval-list] -> [complete list]
+
+Given a list, [1 4 7 9 12] -> [1 4 5 7 8 9 10 12], which is ready to be passed to =generate-pairs=.
+
+Observations:
+- The first two numbers are a complete pair.
+- The following pair consist in the second number of the last pair plus one and the next number in the original sequence.
+
+#+begin_src clojure :tangle ../closh-scripting/partitioning.clj :mkdirp 
+  (defn complete-list [coll]
+    (loop [new-coll (vec (take 2 coll))
+           remaining-coll (vec (drop 2 coll))]
+      (if (= (count remaining-coll) 0)
+        new-coll
+        (recur
+         (into new-coll
+               (vec (list (inc (last new-coll))
+                          (first remaining-coll))))
+         (drop 1 remaining-coll)))))
+  ;; (complete-list [1 4 7 9 12])
+#+end_src
+
+
+** The function which does "all the job"
+
+The =partition-list= take a list, as the one denoted in the [[*Real case][section, Real case.]]
+#+begin_src clojure :tangle ../closh-scripting/partitioning.clj :mkdirp 
+  (defn partition-list [coll]
+    (->
+     (complete-list coll)
+     (generate-pairs)))
+ #+end_src
+
+** Talking to the shell
+Finally, after developing our "back-end", we wish to create effects on the files - this we do through the closh shell.
+
+#+begin_src clojure :tangle ../closh-scripting/partitioning.clj :mkdirp
+
+#+end_src
