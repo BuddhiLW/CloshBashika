@@ -18,3 +18,4 @@
 (sh ls |> (map #(file-ids % reg11 reg12)) |> (map #(- % c)) |> (map str) |> (map #(clj-rn %1 reg21 %2 reg22) (sh ls |> (identity)))))
 
 rename-test "test" ".txt" 5 "does-it-work" ".org"
+

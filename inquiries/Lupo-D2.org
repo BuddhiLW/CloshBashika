@@ -10,7 +10,7 @@ Assim, seria ideal converter o nome DSC01415.JPG -> DSC00001.JPG. Ou, de forma m
 
 ** Solução com *closh* e *babashka*
 
-#+begin_src clojure :tangle ./rename.clj :mkdirp
+#+begin_src clojure :tangle ../closh-scripting/rename.clj :mkdirp
   #!/usr/bin/env closh-zero.jar
   
   (defn split-reg [filename reg] 
@@ -31,8 +31,4 @@ Assim, seria ideal converter o nome DSC01415.JPG -> DSC00001.JPG. Ou, de forma m
   (sh ls |> (map #(file-ids % reg11 reg12)) |> (map #(- % c)) |> (map str) |> (map #(clj-rn %1 reg21 %2 reg22) (sh ls |> (identity)))))
   
   rename-test "test" ".txt" 5 "does-it-work" ".org"
- #+end_src
-
-#+begin_src clojure :tangle ./separete-in-files.clj :mkdirp
-
  #+end_src
