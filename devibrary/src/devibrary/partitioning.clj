@@ -22,7 +22,7 @@
        (into new-coll
              (vec (list (inc (last new-coll))
                         (first remaining-coll))))
-       (drop 1 remaining-coll)))))
+      (drop 1 remaining-coll)))))
 
 (defn partition-list [coll]
   (->

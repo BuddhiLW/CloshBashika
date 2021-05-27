@@ -75,7 +75,6 @@ Observations:
   ;; (complete-list [1 4 7 9 12])
 #+end_src
 
-
 ** The function which does composes to the desired form
 
 The =partition-list= take a list, as the one denoted in the [[*Real case][section, Real case.]]
@@ -144,7 +143,7 @@ Let's create a function which does exactly that
      =coll-map= is the refined partition-scheme data;
      =start= is which folder to start"
     [coll-map coll-file-id start]
-    (loop [dir-map {}
+    (loop [dir-map []
            nth-dir start
            subset coll-map
            id-list coll-file-id]

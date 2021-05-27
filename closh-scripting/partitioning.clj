@@ -41,7 +41,7 @@
    =coll-map= is the refined partition-scheme data;
    =start= is which folder to start"
   [coll-map coll-file-id start]
-  (loop [dir-map {}
+  (loop [dir-map []
          nth-dir start
          subset coll-map
          id-list coll-file-id]
