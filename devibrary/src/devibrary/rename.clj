@@ -1,4 +1,4 @@
-#!/usr/bin/env bb
+(ns devibrary.rename)
 
 (defn split-reg [filename reg] 
   (str/split filename (re-pattern reg)))
@@ -16,6 +16,3 @@
 
 (defcmd rename-test [reg11 reg12 c reg21 reg22]
 (sh ls |> (map #(file-ids % reg11 reg12)) |> (map #(- % c)) |> (map str) |> (map #(clj-rn %1 reg21 %2 reg22) (sh ls |> (identity)))))
-
-;; (sh rename-test "test" ".txt" 5 "does-it-work" ".org")
-
