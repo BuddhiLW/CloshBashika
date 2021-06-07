@@ -11,24 +11,36 @@ Assim, seria ideal converter o nome DSC01415.JPG -> DSC00001.JPG. Ou, de forma m
 ** Solução com *closh* e *babashka*
 
 #+begin_src clojure :tangle ../closh-scripting/rename.clj :mkdirp
-  #!/usr/bin/env closh-zero.jar
+    #!/usr/bin/env closh-zero.jar
+    
+    (defn split-reg [filename reg] 
+      (str/split filename (re-pattern reg)))
+    
+    (defn file-ids [file reg1 reg2]
+      (->
+       (split-reg file reg1)
+       (second)
+       ((fn [s] (split-reg s reg2)))
+       (first)
+       ((fn [s] (Integer/parseInt s)))))
+    
+    (defn clj-rn [file reg1 arg reg2]
+      (sh mv (identity file) (str/join [reg1 arg reg2])))
+    
+    (defcmd rename-test [reg11 reg12 c reg21 reg22]
+    (sh ls |> (map #(file-ids % reg11 reg12)) |> (map #(- % c)) |> (map str) |> (map #(clj-rn %1 reg21 %2 reg22) (sh ls |> (identity)))))
+    
+    ;; rename-test "test" ".txt" 5 "does-it-work" ".org"
   
-  (defn split-reg [filename reg] 
-    (str/split filename (re-pattern reg)))
-  
-  (defn file-ids [file reg1 reg2]
+  (defn dir-ids [dir reg1]
     (->
-     (split-reg file reg1)
+     (split-reg dir reg1)
      (second)
-     ((fn [s] (split-reg s reg2)))
-     (first)
      ((fn [s] (Integer/parseInt s)))))
   
-  (defn clj-rn [file reg1 arg reg2]
-    (sh mv (identity file) (str/join [reg1 arg reg2])))
+  (defn clj-rn-dir [dir reg1 arg]
+    (sh mv (identity dir) (str/join [reg1 arg])))
   
-  (defcmd rename-test [reg11 reg12 c reg21 reg22]
-  (sh ls |> (map #(file-ids % reg11 reg12)) |> (map #(- % c)) |> (map str) |> (map #(clj-rn %1 reg21 %2 reg22) (sh ls |> (identity)))))
-  
-  rename-test "test" ".txt" 5 "does-it-work" ".org"
- #+end_src
+  (defcmd rename-dir [reg11 c reg21]
+   (sh find . -name (str "^" (str reg11)) -maxdepth 1 -type d  |> (drop 1) |> (map #(dir-ids % reg11)) |> (map #(- % c)) |> (map str) |> (map #(clj-rn-dir %1 reg21 %2) (sh find . -maxdepth 1 -type d  |> (drop 1)))))
+  #+end_src
