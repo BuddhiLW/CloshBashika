@@ -38,11 +38,11 @@
   (vec (map destruct-in-range (partition-list coll))))
 
 (defn which-ids-subset-contains?
-  "Returns list of pertained ids of the =id-list=
+    "Returns list of pertained ids of the =id-list=
     to the first subset of the =set=."
-  [id-list set]
-  (filter #(not (nil? %))
-          (map (fn [e] (some (hash-set e) (first set))) id-list)))
+    [id-list set]
+    (filter #(not (nil? %))
+            (map (fn [e] (some (hash-set e) (first set))) id-list)))
 
 (defn populate-key-map
   "Given a interval-collection; colletion of file-ids;
@@ -52,7 +52,7 @@
      =coll-map= is the refined partition-scheme data;
      =start= is which folder to start"
   [coll-map coll-file-id start]
-  (loop [dir-map {}
+  (loop [dir-map []
          nth-dir start
          subset coll-map
          id-list coll-file-id]
@@ -110,5 +110,3 @@ Returns a folder-structure populated with the given p-vec relation"
                    (identity reg-dir)
                    (identity reg1-file)
                    (identity reg2-file)))))))
-
-

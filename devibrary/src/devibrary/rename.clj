@@ -1,4 +1,7 @@
-(ns devibrary.rename)
+(ns devibrary.rename
+  (:require [clojure.java.shell :refer [sh]]
+            [clojure.string :as str]))
+
 
 (defn split-reg [filename reg] 
   (str/split filename (re-pattern reg)))
@@ -32,3 +35,5 @@
   (sh ls -d */ |> (map #(dir-ids % reg11)) |> (map #(- % c)) |> (map str) |> (map #(clj-rn-dir %1 %2) (sh ls -d */ |> (identity)))))
 (defcmd rename-test [reg11 reg12 c reg21 reg22]
 (sh ls |> (map #(file-ids % reg11 reg12)) |> (map #(- % c)) |> (map str) |> (map #(clj-rn %1 reg21 %2 reg22) (sh ls |> (identity)))))
+
+;; (split-reg "IMG_3688 (2021_04_23 18_47_23 UTC).JPG" " (2021_04_23 18_47_23 UTC).JPG") => not giving right awnser
