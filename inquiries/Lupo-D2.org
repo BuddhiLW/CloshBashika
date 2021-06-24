@@ -44,3 +44,4 @@ Assim, seria ideal converter o nome DSC01415.JPG -> DSC00001.JPG. Ou, de forma m
   (defcmd rename-dir [reg11 c reg21]
    (sh find . -name (str "^" (str reg11)) -maxdepth 1 -type d  |> (drop 1) |> (map #(dir-ids % reg11)) |> (map #(- % c)) |> (map str) |> (map #(clj-rn-dir %1 reg21 %2) (sh find . -maxdepth 1 -type d  |> (drop 1)))))
   #+end_src
+  
